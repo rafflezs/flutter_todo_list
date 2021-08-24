@@ -20,7 +20,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List _todoList = ["Teste", "Teste2"];
+  List _todoList = [];
+  final _todoController = TextEditingController();
+
+  void _addTodo() {
+    setState(() {
+      Map<String, dynamic> newTodo = Map();
+      newTodo["name"] = _todoController.text;
+      _todoController.text = "";
+      newTodo["isDone"] = false;
+      _todoList.add(newTodo);
+    });
+  }
 
   Future<File> _getFile() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -64,13 +75,14 @@ class _HomeState extends State<Home> {
               children: <Widget>[
                 Expanded(
                   child: TextField(
+                    controller: _todoController,
                     decoration: InputDecoration(
                         labelText: "Nova tarefa",
                         labelStyle: TextStyle(color: Colors.blue)),
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _addTodo,
                   child: Text("Adcionar"),
                   style: ButtonStyle(
                       backgroundColor:
@@ -85,13 +97,18 @@ class _HomeState extends State<Home> {
                   itemCount: _todoList.length,
                   itemBuilder: (context, index) {
                     return CheckboxListTile(
-                      title: Text(_todoList[index]["title"]),
-                      value: _todoList[index]["ok"],
+                      title: Text(_todoList[index]["name"]),
+                      value: _todoList[index]["isDone"],
                       secondary: CircleAvatar(
-                        child: Icon(
-                            _todoList[index]["ok"] ? Icons.check : Icons.error),
+                        child: Icon(_todoList[index]["isDone"]
+                            ? Icons.check
+                            : Icons.error),
                       ),
-                      onChanged: (bool? value) {},
+                      onChanged: (c) {
+                        setState(() {
+                          _todoList[index]["isDone"] = c;
+                        });
+                      },
                     );
                   }))
         ],
