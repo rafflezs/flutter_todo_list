@@ -1,7 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
-  runApp(app);
+  runApp(MaterialApp(
+    title: "To-do List",
+    home: Home(),
+  ));
 }
 
 class Home extends StatefulWidget {
@@ -12,8 +20,82 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List _todoList = ["Teste", "Teste2"];
+
+  Future<File> _getFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File("${directory.path}/savedData.json");
+  }
+
+  Future<File> _saveData() async {
+    String data = json.encode(_todoList);
+    final file = await _getFile();
+    return file.writeAsString(data);
+  }
+
+  Future<String?> _readData() async {
+    try {
+      final file = await _getFile();
+      return file.readAsString();
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          "To-do List",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(10, 1, 1, 1),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        labelText: "Nova tarefa",
+                        labelStyle: TextStyle(color: Colors.blue)),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text("Adcionar"),
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue)),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+              child: ListView.builder(
+                  padding: EdgeInsets.only(top: 10),
+                  itemCount: _todoList.length,
+                  itemBuilder: (context, index) {
+                    return CheckboxListTile(
+                      title: Text(_todoList[index]["title"]),
+                      value: _todoList[index]["ok"],
+                      secondary: CircleAvatar(
+                        child: Icon(
+                            _todoList[index]["ok"] ? Icons.check : Icons.error),
+                      ),
+                      onChanged: (bool? value) {},
+                    );
+                  }))
+        ],
+      ),
+    );
   }
 }
