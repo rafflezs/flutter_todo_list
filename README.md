@@ -8,7 +8,7 @@ Todo list with JSON permanent local storage, list-element recovery and list refr
 
 ## Home page 📱
 
-<img src="..." width=30% height=30%>
+<img src="https://user-images.githubusercontent.com/50029136/130710935-309a1273-95d8-4733-809f-e364056914af.png" width=30% height=30%>
 
 ## Executing ❗
 
